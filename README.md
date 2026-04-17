@@ -11,23 +11,6 @@ How to Play:
 - In multiplayer mode, two players compete to get the highest score
 - The game ends when the round is over or a losing condition happens
 
-Classes Used:
-- GameObject class as the base class
-- Fruit class derived from GameObject
-- Bomb class derived from GameObject
-- Player class to keep track of each player
-- Game class to control the game logic
-- NetworkManager class to handle multiplayer connection
-
-Concepts Used:
-- Classes and objects
-- Inheritance
-- Polymorphism
-- Pointers
-- Graphics using SFML
-- Event handling
-- Network communication
-
 Bonus Feature:
 The bonus feature in this project is multiplayer network play.
 Two players can connect and play the game together using socket communication.
