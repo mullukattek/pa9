@@ -1,0 +1,16 @@
+# Ignore the Visual Studio hidden folder anywhere it appears
+.vs/
+initalCode/.vs/
+
+# Ignore all build folders and temp files
+[Dd]ebug/
+[Rr]elease/
+x64/
+*.ipch
+*.exe
+*.pdb
+*.obj
+*.log
+*.tlog
+*.recipe
+*.ilk
