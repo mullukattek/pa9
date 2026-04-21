@@ -139,7 +139,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BuggyCode.cpp" />
+    <ClCompile Include="CodeItem.cpp" />
+    <ClCompile Include="CorrectCode.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BuggyCode.hpp" />
+    <ClInclude Include="CodeItem.hpp" />
+    <ClInclude Include="CorrectCode.hpp" />
+    <ClInclude Include="Game.hpp" />
+    <ClInclude Include="GameObject.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

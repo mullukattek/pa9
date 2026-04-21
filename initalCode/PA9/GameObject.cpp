@@ -7,9 +7,9 @@
 #include "GameObject.hpp"
 
 // initializes position and speed
-GameObject::GameObject(float startX, float startY, float spd) {
-    x = startX;
-    y = startY;
+GameObject::GameObject(const float& startX, const float& startY, const float& spd/*, const sf::Texture& img*/ ) //: sf::Sprite(img)
+{
+    //setPosition(sf::Vector2f(startX, startY));
     speed = spd;
 }
 
@@ -27,12 +27,12 @@ void GameObject::render() {
 }
 
 // Set new position
-void GameObject::setPosition(float newX, float newY) {
-    x = newX;
-    y = newY;
-}
-
-// Set speed
-void GameObject::setSpeed(float spd) {
-    speed = spd;
-}
+//void GameObject::setPosition(float newX, float newY) {
+//    x = newX;
+//    y = newY;
+//}
+//
+//// Set speed
+//void GameObject::setSpeed(float spd) {
+//    speed = spd;
+//}

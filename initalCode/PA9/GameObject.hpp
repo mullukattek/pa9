@@ -6,16 +6,17 @@
 // Base Class
 #pragma once                 
 #include <iostream>         
-
+#include <SFML/Graphics.hpp>
 // Base class for all objects in the game
-class GameObject {
+class GameObject // public sf::Sprite{
+{
 protected:
     float x, y;            // position of object on screen
     float speed;           // movement speed
 
 public:
     // Constructor
-    GameObject(float startX = 0, float startY = 0, float spd = 1.0f);
+    GameObject(const float& startX = 0.f, const float& startY = 0.f, const float& spd = 0.f /*const sf::Texture& img*/);
 
     // Virtual destructor 
     virtual ~GameObject();
@@ -27,9 +28,9 @@ public:
     virtual void render();
 
     // Set position
-    void setPosition(float newX, float newY);
+   // void setPosition(float newX, float newY);
 
     // Set speed
-    void setSpeed(float spd);
+   // void setSpeed(float spd);
 };
 
