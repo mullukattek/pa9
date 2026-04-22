@@ -1,6 +1,7 @@
 
 #include "Game.hpp"
 
+//checks if an item should be deleted
 void Game::checkDel()
 {
     for (int i = 0; i < mItems.size(); ++i)
@@ -12,20 +13,35 @@ void Game::checkDel()
     }
 }
 
+//creates and moves objects as needed
 void Game::createMoveObj(const float& dt)
 {
     std::random_device random;
-    std::uniform_real_distribution<float> dist1(100.f * 2, (window.getSize().x - 100.f * 2));
-    std::uniform_real_distribution<float> dist2(100.f * 2, (window.getSize().y - 100.f * 2));
+    std::uniform_real_distribution<float> pos1(100.f * 2, (window.getSize().x - 100.f * 2));
+    std::uniform_real_distribution<float> pos2(100.f * 2, (window.getSize().y - 100.f * 2));
+    std::uniform_int_distribution<int> item(1, 2);
+    img1.loadFromFile("test1.png");
+    img2.loadFromFile("test2.jpg");
     if (temp == nullptr)
     {
-        temp = new sf::CircleShape(100.f);
+        if (item(random) == 1)
+        {
+            temp = new CorrectCode(0, 0, 0, 0, 0, img1);
+            temp->setScale(sf::Vector2f(0.1, 0.1));
+        }
+        else
+        {
+            temp = new BuggyCode(0, 0, 0, 0, 0, img2, SYNTAX);
+            temp->setScale(sf::Vector2f(0.1, 0.1));
+        }
+        
     }
     if (mItems.size() < 4 && time.getElapsedTime().asSeconds() >= 2)
     {
-        temp->setPosition(sf::Vector2f(dist1(random), dist2(random)));
+        temp->setPosition(sf::Vector2f(pos1(random), pos2(random)));
         mItems.push_back(*temp);
         time.restart();
+        temp = nullptr;
     }
     for (int i = 0; i < mItems.size(); ++i)
     {

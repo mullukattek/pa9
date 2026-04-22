@@ -7,8 +7,10 @@
 #include "CorrectCode.hpp" 
 
 // Constructor
-CorrectCode::CorrectCode() : CodeItem() {
-    
+CorrectCode::CorrectCode(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img):
+    CodeItem(startX, startY, xSpd, ySpd, spawn, img) 
+{
+    sliced = false;
 }
 
 // Destructor

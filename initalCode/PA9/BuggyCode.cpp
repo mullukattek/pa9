@@ -6,8 +6,10 @@
 #include "BuggyCode.hpp"
 #include <iostream> 
 
-// Constructor sets error type
-BuggyCode::BuggyCode(ErrorType t) : CodeItem() {
+BuggyCode::BuggyCode(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img, const ErrorType& t):
+    CodeItem(startX, startY, xSpd, ySpd, spawn, img)
+{
+    sliced = false;
     type = t;
 }
 
@@ -31,9 +33,9 @@ int BuggyCode::onSlice() {
 // Render shows which type it is
 void BuggyCode::render() {
     if (type == SYNTAX) {
-        std::cout << "Syntax Error Code at (" << x << ", " << y << ")" << std::endl;
+        //std::cout << "Syntax Error Code at (" <<  << ", " << y << ")" << std::endl;
     }
     else {
-        std::cout << "Logic Error Code at (" << x << ", " << y << ")" << std::endl;
+        //std::cout << "Logic Error Code at (" << x << ", " << y << ")" << std::endl;
     }
 }

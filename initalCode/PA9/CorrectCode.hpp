@@ -10,7 +10,7 @@
 // Represents correct code
 class CorrectCode : public CodeItem {
 public:
-    CorrectCode();
+    CorrectCode(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img);
     ~CorrectCode();
 
     // Override slice behavior

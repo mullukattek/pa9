@@ -13,7 +13,7 @@ protected:
     bool sliced;        
 
 public:
-    CodeItem();
+    CodeItem(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img);
     virtual ~CodeItem();
 
     // Virtual function for slicing 
@@ -21,4 +21,6 @@ public:
 
     // Override render
     virtual void render() override;
+
+    bool isSliced();
 };
