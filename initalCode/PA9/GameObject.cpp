@@ -12,8 +12,8 @@
 GameObject::GameObject(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img) : sf::Sprite(img)
 {
     setPosition(sf::Vector2f(startX, startY));
-    xSpeed = xSpd;
-    ySpeed = ySpd;
+    velocity.x = xSpd;
+    velocity.y = ySpd;
     timeSpawn = spawn;
 }
 
@@ -32,7 +32,13 @@ void GameObject::render() {
 
 sf::Vector2f GameObject::getSpeed() const
 {
-    return sf::Vector2f(xSpeed, ySpeed);
+    return velocity;
+}
+
+void GameObject::setSpeed(const float& xSpd, const float& ySpd)
+{
+    velocity.x = xSpd;
+    velocity.y = ySpd;
 }
 
 int GameObject::getSpawnTime() const

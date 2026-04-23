@@ -12,7 +12,7 @@
 class GameObject : public sf::Sprite // public sf::Sprite{
 {
 protected:
-    float xSpeed, ySpeed; // movement speed in x and y directions 
+    sf::Vector2f velocity; // movement speed in x and y directions 
     int timeSpawn; // used to determine when each game object should spawn
 public:
     // Constructor
@@ -28,6 +28,8 @@ public:
     virtual void render();
 
     sf::Vector2f getSpeed() const;
+
+    void setSpeed(const float& xSpd, const float& ySpd);
 
     int getSpawnTime() const;
     // Set position
