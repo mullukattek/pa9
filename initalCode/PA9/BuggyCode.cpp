@@ -19,15 +19,12 @@ BuggyCode::~BuggyCode() {}
 // Polymorphism: behavior depends on type
 int BuggyCode::onSlice() {
     sliced = true;
-
     if (type == SYNTAX) {
         return -1;
     }
     else if (type == LOGIC) {
         return -2;
     }
-
-    return 0;
 }
 
 // Render shows which type it is

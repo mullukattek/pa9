@@ -12,8 +12,20 @@ void Game::checkDel()
 {
     for (int i = 0; i < mItems.size(); ++i)
     {
-        if (mItems[i].getPosition().y >= 1200 + 200)
+        if (mItems[i]->getPosition().y >= 1200 + 200)
         {
+            mItems.erase(mItems.begin() + i);
+        }
+    }
+}
+
+void Game::checkDel(const sf::RectangleShape* deleteBox)
+{
+    for (int i = 0; i < mItems.size(); ++i)
+    {
+        if ((deleteBox->getGlobalBounds().findIntersection(mItems[i]->getGlobalBounds())).has_value()) //Detect collision with the Clicker box and mItems
+        {
+            mItems[i]->onSlice(); // Ignores returned value, value must be added to score
             mItems.erase(mItems.begin() + i);
         }
     }
@@ -64,7 +76,6 @@ void Game::createMoveObj()
         else
         {
             temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), img2, SYNTAX);
-            
         }
         float aspectRatio = temp->getTexture().getSize().x / temp->getTexture().getSize().y;
         temp->setScale(sf::Vector2f(0.1, 0.1 * aspectRatio));
@@ -76,11 +87,10 @@ void Game::createMoveObj()
         {
             temp->setSpeed(-temp->getSpeed().x, temp->getSpeed().y);
         }
-        mItems.push_back(*temp);
+        mItems.push_back(temp);
         spawnTime.restart();
         temp = nullptr;
     }
-  
 }
 
 /*
@@ -96,7 +106,17 @@ void Game::drawGame()
 {
     for (int i = 0; i < mItems.size(); ++i)
     {
-        window.draw(mItems[i]);
+        window.draw(*mItems[i]);
+    }
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
+
+        deleteBox->setPosition(worldPos);
+
+        window.draw(*deleteBox);
     }
 }
 
@@ -104,15 +124,17 @@ void Game::moveObj(const float& dt)
 {
     for (int i = 0; i < mItems.size(); ++i)
     {
-        mItems[i].move(mItems[i].getSpeed() * dt);
-        mItems[i].setSpeed(mItems[i].getSpeed().x, mItems[i].getSpeed().y + (3500 * dt)); //the amount you add also has to be a ratio adding 1 to 100 versus 20 creates vastly diffrent deacclerations
+        mItems[i]->move(mItems[i]->getSpeed() * dt);
+        mItems[i]->setSpeed(mItems[i]->getSpeed().x, mItems[i]->getSpeed().y + (3500 * dt)); //the amount you add also has to be a ratio adding 1 to 100 versus 20 creates vastly diffrent deacclerations
     }
 }
 
 Game::Game()
 {
     temp = nullptr;
+    deleteBox = nullptr;
     state = NA;
+   
 }
 
 void Game::runGame()
@@ -127,6 +149,11 @@ void Game::runGame()
     title.setTexture(&img1);
     setUpMenu();
     window.setFramerateLimit(30);
+
+    //Set up DeleteBox object on Heap
+    deleteBox = new sf::RectangleShape({ 7.f, 7.f });
+    deleteBox->setFillColor(sf::Color::Transparent);
+
     while (window.isOpen())
     {
         float deltaTime = clock.restart().asSeconds(); //makes movement of objects independent from framerate (it will move at a similar speed regardless of the frame rate)
@@ -145,6 +172,8 @@ void Game::runGame()
 
             window.clear();
             drawGame();
+            checkDel(deleteBox);
+
             window.display();
         }
         else if (state == EXIT)

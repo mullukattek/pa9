@@ -32,6 +32,8 @@ public:
     void setSpeed(const float& xSpd, const float& ySpd);
 
     int getSpawnTime() const;
+
+    virtual int onSlice() = 0;
     // Set position
    // void setPosition(float newX, float newY);
 

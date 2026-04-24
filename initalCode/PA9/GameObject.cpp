@@ -47,6 +47,7 @@ int GameObject::getSpawnTime() const
     return timeSpawn;
 }
 
+
 // Set new position
 //void GameObject::setPosition(float newX, float newY) {
 //    x = newX;

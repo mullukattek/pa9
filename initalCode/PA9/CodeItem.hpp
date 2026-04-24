@@ -17,7 +17,7 @@ public:
     virtual ~CodeItem();
 
     // Virtual function for slicing 
-    virtual int onSlice(); // should returns points
+    virtual int onSlice() override; // should returns points
 
     // Override render
     virtual void render() override;
