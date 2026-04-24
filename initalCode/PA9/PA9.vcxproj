@@ -145,6 +145,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BuggyCode.hpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="CorrectCode.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameObject.hpp" />
+    <ClInclude Include="MainMenu.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="test1.png" />

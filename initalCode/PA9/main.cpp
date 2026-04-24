@@ -3,9 +3,7 @@
 #include <random>
 int main()
 {
-
     Game game;
-
 
     game.runGame();
     

@@ -1,31 +1,60 @@
 
 #include "Game.hpp"
 
+void Game::loadTextures()
+{
+    img1.loadFromFile("test1.png");
+    img2.loadFromFile("test2.jpg");
+}
+
 //checks if an item should be deleted
 void Game::checkDel()
 {
     for (int i = 0; i < mItems.size(); ++i)
     {
-        if (mItems[i].getPosition().y >= window.getSize().y + 300)
+        if (mItems[i].getPosition().y >= 1200 + 200)
         {
             mItems.erase(mItems.begin() + i);
         }
     }
 }
 
-//creates and moves objects as needed
+void Game::setUpMenu()
+{
+    title.setPosition(sf::Vector2f(window.getSize().x / 2, 0));
+    title.setSize(sf::Vector2f(100, 100));
+}
+
+
+void Game::drawMenu()
+{
+    window.draw(title);
+    window.draw(play);
+    window.draw(exit);
+}
+
+void Game::menuLogic()
+{
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        if (title.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window))))
+        {
+            state = PLAY;
+        }
+    }
+}
+
+//creates objects
 void Game::createMoveObj()
 {
     std::random_device random;
-    std::uniform_real_distribution<float> pos1(window.getSize().x / 3, window.getSize().x - (window.getSize().x / 3)); //random x position focused in the middle of the screen
+    std::uniform_real_distribution<float> pos1(640, 1920 - 640); //random x position focused in the middle of the screen
     std::uniform_int_distribution<int> item(1, 10); //random item (buggy or normal)
-    std::uniform_real_distribution<float> xSpeed(0, window.getSize().x *0.005); //the X speed can be between 0 and 0.5% of the screen size for any size of screen (this makes it so there is around a consistent speed between
+    std::uniform_real_distribution<float> xSpeed(0, 600); //the X speed can be between 0 and 0.5% of the screen size for any size of screen (this makes it so there is around a consistent speed between
                                                                                 //screen sizes
-    std::uniform_real_distribution<float> ySpeed(window.getSize().y * 0.029, window.getSize().y * 0.037); //similar logic for y speed
+    std::uniform_real_distribution<float> ySpeed(2100, 2700); //similar logic for y speed
     std::uniform_int_distribution<int> spawnT(1, 2);
     //Once we add difficulty to the game we can create varibles for all of these and then change them as the diffculty increases;
-    img1.loadFromFile("test1.png");
-    img2.loadFromFile("test2.jpg");
     if (temp == nullptr)
     {
         if (item(random) <= 6) //higher probablity that a correct code item will spawn
@@ -37,14 +66,12 @@ void Game::createMoveObj()
             temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), img2, SYNTAX);
             
         }
-        float aspectRatio = window.getSize().x / window.getSize().y;
-        float temp1 = (window.getSize().x * 0.05) / temp->getTexture().getSize().x;
-        float temp2 = temp1 * aspectRatio;
-        temp->setScale(sf::Vector2f(temp1, temp2));
+        float aspectRatio = temp->getTexture().getSize().x / temp->getTexture().getSize().y;
+        temp->setScale(sf::Vector2f(0.1, 0.1 * aspectRatio));
     }
     if (mItems.size() < 4 && spawnTime.getElapsedTime().asSeconds() >= temp->getSpawnTime())
     {
-        temp->setPosition(sf::Vector2f(pos1(random), window.getSize().y));
+        temp->setPosition(sf::Vector2f(pos1(random), 1200));
         if (temp->getPosition().x > window.getSize().x / 2)
         {
             temp->setSpeed(-temp->getSpeed().x, temp->getSpeed().y);
@@ -67,7 +94,6 @@ Post: The necessary objects have been drawn to the screen
 */
 void Game::drawGame()
 {
-    
     for (int i = 0; i < mItems.size(); ++i)
     {
         window.draw(mItems[i]);
@@ -78,24 +104,29 @@ void Game::moveObj(const float& dt)
 {
     for (int i = 0; i < mItems.size(); ++i)
     {
-        mItems[i].move(mItems[i].getSpeed());
-        mItems[i].setSpeed(mItems[i].getSpeed().x, mItems[i].getSpeed().y + window.getSize().y * 0.000833333); //the amount you add also has to be a ratio adding 1 to 100 versus 20 creates vastly diffrent deacclerations
+        mItems[i].move(mItems[i].getSpeed() * dt);
+        mItems[i].setSpeed(mItems[i].getSpeed().x, mItems[i].getSpeed().y + (3500 * dt)); //the amount you add also has to be a ratio adding 1 to 100 versus 20 creates vastly diffrent deacclerations
     }
 }
 
 Game::Game()
 {
     temp = nullptr;
+    state = NA;
 }
 
 void Game::runGame()
 {
-
     sf::Clock clock;
     sf::VideoMode s;
-    window.create(sf::VideoMode({ 1920, 1000 }), "Game"); //s.getDesktopMode() // sf::VideoMode({200, 200})
+    sf::View gameView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(1920 , 1200)));
+    window.create(s.getDesktopMode(), "Game"); //s.getDesktopMode() // sf::VideoMode({200, 200})
+    window.setView(gameView);
     window.setFramerateLimit(60);
-
+    loadTextures();
+    title.setTexture(&img1);
+    setUpMenu();
+    window.setFramerateLimit(30);
     while (window.isOpen())
     {
         float deltaTime = clock.restart().asSeconds(); //makes movement of objects independent from framerate (it will move at a similar speed regardless of the frame rate)
@@ -106,13 +137,28 @@ void Game::runGame()
                 window.close();
             }
         }
+        if (state == PLAY)
+        {
+            createMoveObj();
+            moveObj(deltaTime);
+            checkDel();
 
-        createMoveObj();
-        moveObj(deltaTime);
-        checkDel();
+            window.clear();
+            drawGame();
+            window.display();
+        }
+        else if (state == EXIT)
+        {
+            window.close();
+        }
+        else
+        {
+            menuLogic();
 
-        window.clear();
-        drawGame();
-        window.display();
+            window.clear();
+            drawMenu();
+            window.display();
+        }
+       
     }
 }

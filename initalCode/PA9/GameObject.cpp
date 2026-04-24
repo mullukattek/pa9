@@ -21,8 +21,9 @@ GameObject::GameObject(const float& startX, const float& startY, const float& xS
 GameObject::~GameObject() {}
 
 // Update function moves object 
-void GameObject::update() {
-   
+void GameObject::update() 
+{
+    move(velocity);
 }
 
 // Render function 
