@@ -1,10 +1,29 @@
 
 #include "Game.hpp"
 
-void Game::loadTextures()
+bool Game::loadTextures(const std::string* goodC, const int& size1, const std::string* badC, const int& size2)
 {
-    img1.loadFromFile("test1.png");
-    img2.loadFromFile("test2.jpg");
+    sf::Texture temp;
+    bool result = true;
+    for (int i = 0; i < size1; ++i)
+    {
+        result = temp.loadFromFile(goodC[i]);
+        if (!result)
+        {
+            return result;
+        }
+        goodCode.push_back(temp);
+    }
+    for (int c = 0; c < size2; ++c)
+    {
+        result = temp.loadFromFile(badC[c]);
+        if (!result)
+        {
+            return result;
+        }
+        badCode.push_back(temp);
+    }
+    return result;
 }
 
 //checks if an item should be deleted
@@ -31,51 +50,27 @@ void Game::checkDel(const sf::RectangleShape* deleteBox)
     }
 }
 
-void Game::setUpMenu()
-{
-    title.setPosition(sf::Vector2f(window.getSize().x / 2, 0));
-    title.setSize(sf::Vector2f(100, 100));
-}
-
-
-void Game::drawMenu()
-{
-    window.draw(title);
-    window.draw(play);
-    window.draw(exit);
-}
-
-void Game::menuLogic()
-{
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-    {
-        if (title.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window))))
-        {
-            state = PLAY;
-        }
-    }
-}
-
 //creates objects
 void Game::createMoveObj()
 {
     std::random_device random;
     std::uniform_real_distribution<float> pos1(640, 1920 - 640); //random x position focused in the middle of the screen
     std::uniform_int_distribution<int> item(1, 10); //random item (buggy or normal)
-    std::uniform_real_distribution<float> xSpeed(0, 600); //the X speed can be between 0 and 0.5% of the screen size for any size of screen (this makes it so there is around a consistent speed between
-                                                                                //screen sizes
+    std::uniform_real_distribution<float> xSpeed(0, 600); 
+                                                                              
     std::uniform_real_distribution<float> ySpeed(2100, 2700); //similar logic for y speed
     std::uniform_int_distribution<int> spawnT(1, 2);
     //Once we add difficulty to the game we can create varibles for all of these and then change them as the diffculty increases;
-    if (temp == nullptr)
+    if (temp == nullptr) //if there is no object waiting to be added to the screen
     {
         if (item(random) <= 6) //higher probablity that a correct code item will spawn
         {
-            temp = new CorrectCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), img1);
+            temp = new CorrectCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), goodCode[0]);
         }
         else
         {
-            temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), img2, SYNTAX);
+            temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[0], SYNTAX);
+            
         }
         float aspectRatio = temp->getTexture().getSize().x / temp->getTexture().getSize().y;
         temp->setScale(sf::Vector2f(0.1, 0.1 * aspectRatio));
@@ -108,7 +103,6 @@ void Game::drawGame()
     {
         window.draw(*mItems[i]);
     }
-
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
         deleteBox->setSize({ 15.f,15.f });
@@ -138,10 +132,9 @@ Game::Game()
     temp = nullptr;
     deleteBox = nullptr;
     state = NA;
-   
 }
 
-void Game::runGame()
+void Game::runGame(const std::string* goodC, const int& size1, const std::string* badC, const int& size2, const std::string* menuTex, const int& size3)
 {
     sf::Clock clock;
     sf::VideoMode s;
@@ -149,48 +142,57 @@ void Game::runGame()
     window.create(s.getDesktopMode(), "Game"); //s.getDesktopMode() // sf::VideoMode({200, 200})
     window.setView(gameView);
     window.setFramerateLimit(60);
-    loadTextures();
-    title.setTexture(&img1);
-    setUpMenu();
-    window.setFramerateLimit(30);
-
-    //Set up DeleteBox object on Heap
-    deleteBox = new sf::RectangleShape;
-
-    while (window.isOpen())
+    
+    if (loadTextures(goodC, size1, badC, size2) && mMenu.setUpMenu(menuTex, size3)) //Makes sure that all of the textures were loaded properly
     {
-        float deltaTime = clock.restart().asSeconds(); //makes movement of objects independent from framerate (it will move at a similar speed regardless of the frame rate)
-        while (const std::optional event = window.pollEvent())
+        deleteBox = new sf::RectangleShape({ 7.f, 7.f });
+        deleteBox->setFillColor(sf::Color::Transparent);
+        int hold = 0;
+        while (window.isOpen())
         {
-            if (event->is<sf::Event::Closed>())
+            float deltaTime = clock.restart().asSeconds(); //makes movement of objects independent from framerate (it will move at a similar speed regardless of the frame rate)
+            while (const std::optional event = window.pollEvent())
+            {
+                if (event->is<sf::Event::Closed>())
+                {
+                    window.close();
+                }
+            }
+            if (state == PLAY)
+            {
+                createMoveObj();
+                moveObj(deltaTime);
+                checkDel();
+                checkDel(deleteBox);
+
+                window.clear();
+                drawGame();
+                window.display();
+            }
+            else if (state == EXIT)
             {
                 window.close();
             }
-        }
-        if (state == PLAY)
-        {
-            createMoveObj();
-            moveObj(deltaTime);
-            checkDel();
+            else
+            {
+                hold = mMenu.menuLogic(window);
+                if (hold == 1)
+                {
+                    state = PLAY;
+                }
+                else if (hold == 2)
+                {
+                    state = EXIT;
+                }
+                window.clear();
+                mMenu.drawMenu(window);
+                window.display();
+            }
 
-            window.clear();
-            drawGame();
-            checkDel(deleteBox);
-
-            window.display();
         }
-        else if (state == EXIT)
-        {
-            window.close();
-        }
-        else
-        {
-            menuLogic();
-
-            window.clear();
-            drawMenu();
-            window.display();
-        }
-       
+    }
+    else
+    {
+        std::cout << "failed to load textures" << std::endl;
     }
 }

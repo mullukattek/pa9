@@ -64,5 +64,20 @@
     <Image Include="test2.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="title.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="back.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="exit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="howTo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="play.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

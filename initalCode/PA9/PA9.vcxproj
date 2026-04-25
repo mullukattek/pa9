@@ -156,8 +156,13 @@
     <ClInclude Include="MainMenu.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="back.png" />
+    <Image Include="exit.png" />
+    <Image Include="howTo.png" />
+    <Image Include="play.png" />
     <Image Include="test1.png" />
     <Image Include="test2.jpg" />
+    <Image Include="title.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
