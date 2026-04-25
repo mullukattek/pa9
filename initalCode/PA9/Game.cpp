@@ -111,12 +111,16 @@ void Game::drawGame()
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
+        deleteBox->setSize({ 15.f,15.f });
         sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
         sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
 
         deleteBox->setPosition(worldPos);
-
-        window.draw(*deleteBox);
+    }
+    else
+    {
+        deleteBox->setSize({ 0.f,0.f });
+        deleteBox->setPosition({ 0.f,0.f });
     }
 }
 
@@ -151,8 +155,7 @@ void Game::runGame()
     window.setFramerateLimit(30);
 
     //Set up DeleteBox object on Heap
-    deleteBox = new sf::RectangleShape({ 7.f, 7.f });
-    deleteBox->setFillColor(sf::Color::Transparent);
+    deleteBox = new sf::RectangleShape;
 
     while (window.isOpen())
     {
