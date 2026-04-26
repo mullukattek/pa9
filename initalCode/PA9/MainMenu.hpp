@@ -14,7 +14,7 @@ private:
 
 	Menu state;
 	std::vector<sf::Texture> menuText;
-	sf::RectangleShape title, play, howTo, exit, back;
+	sf::RectangleShape title, play, howTo, exit, back, howToScreen;
 	
 	bool loadTextures(const std::string* arr, const int& size);
 

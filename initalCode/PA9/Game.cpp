@@ -1,6 +1,15 @@
 
 #include "Game.hpp"
 
+/*
+Description: Loads the good code textures and the bad code textures and stores them in the vectors goodCode and badCode respectivly
+
+Return: false if any textures failed to load, true otherwise
+
+Pre: none
+
+Post: The textures have been loaded and stored the correct vector
+*/
 bool Game::loadTextures(const std::string* goodC, const int& size1, const std::string* badC, const int& size2)
 {
     sf::Texture temp;
@@ -23,21 +32,20 @@ bool Game::loadTextures(const std::string* goodC, const int& size1, const std::s
         }
         badCode.push_back(temp);
     }
+    result = backText.loadFromFile("background.png");
     return result;
 }
 
-//checks if an item should be deleted
-void Game::checkDel()
-{
-    for (int i = 0; i < mItems.size(); ++i)
-    {
-        if (mItems[i]->getPosition().y >= 1200 + 200)
-        {
-            mItems.erase(mItems.begin() + i);
-        }
-    }
-}
 
+/*
+Description: Checks to see if any objects currently on the screen need to be deleted
+
+Return: none
+
+Pre: none
+
+Post: any objects that should be deleted are
+*/
 void Game::checkDel(const sf::RectangleShape* deleteBox)
 {
     for (int i = 0; i < mItems.size(); ++i)
@@ -47,11 +55,24 @@ void Game::checkDel(const sf::RectangleShape* deleteBox)
             mItems[i]->onSlice(); // Ignores returned value, value must be added to score
             mItems.erase(mItems.begin() + i);
         }
+        else if (mItems[i]->getPosition().y >= 1200 + 200) //The object goes off the screen
+        {
+            mItems.erase(mItems.begin() + i);
+        }
     }
 }
 
-//creates objects
-void Game::createMoveObj()
+
+/*
+Description: Creates new objects randomly as objects are deleted from the screen, created with a random velocity, position (focused in the middle of the screen), and spawn time
+
+Return: none
+
+Pre: Textures have been properly loaded
+
+Post: New objects are created with random speeds and positions
+*/
+void Game::createObj()
 {
     std::random_device random;
     std::uniform_real_distribution<float> pos1(640, 1920 - 640); //random x position focused in the middle of the screen
@@ -60,25 +81,33 @@ void Game::createMoveObj()
                                                                               
     std::uniform_real_distribution<float> ySpeed(2100, 2700); //similar logic for y speed
     std::uniform_int_distribution<int> spawnT(1, 2);
+    std::uniform_int_distribution<int> synLog(1, 2); //chooses between logic or syntax
+
     //Once we add difficulty to the game we can create varibles for all of these and then change them as the diffculty increases;
     if (temp == nullptr) //if there is no object waiting to be added to the screen
     {
         if (item(random) <= 6) //higher probablity that a correct code item will spawn
         {
-            temp = new CorrectCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), goodCode[0]);
+            temp = new CorrectCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), goodCode[8]);
         }
         else
         {
-            temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[0], SYNTAX);
-            
+            if (synLog(random) == 1)
+            {
+                temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[4], SYNTAX);
+            }
+            else
+            {
+                temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[5], LOGIC);
+            } 
         }
-        float aspectRatio = temp->getTexture().getSize().x / temp->getTexture().getSize().y;
-        temp->setScale(sf::Vector2f(0.1, 0.1 * aspectRatio));
+        
+        temp->setScale(sf::Vector2f(4, 4));
     }
     if (mItems.size() < 4 && spawnTime.getElapsedTime().asSeconds() >= temp->getSpawnTime())
     {
         temp->setPosition(sf::Vector2f(pos1(random), 1200));
-        if (temp->getPosition().x > window.getSize().x / 2)
+        if (temp->getPosition().x > 1920 / 2) //Makes sure that objects don't immediately go off the side of the screen 
         {
             temp->setSpeed(-temp->getSpeed().x, temp->getSpeed().y);
         }
@@ -111,22 +140,42 @@ void Game::drawGame()
 
         deleteBox->setPosition(worldPos);
     }
-    else
+    else // if the mouse isn't being held the deleteBox is made to be inactive
     {
         deleteBox->setSize({ 0.f,0.f });
         deleteBox->setPosition({ 0.f,0.f });
     }
 }
 
+
+/*
+Description: Moves the items stored in mItems in an arch from the bottom of the screen
+
+Return: none
+
+Pre: none
+
+Post: the objects stored in mItems are moved 
+*/
 void Game::moveObj(const float& dt)
 {
     for (int i = 0; i < mItems.size(); ++i)
     {
         mItems[i]->move(mItems[i]->getSpeed() * dt);
-        mItems[i]->setSpeed(mItems[i]->getSpeed().x, mItems[i]->getSpeed().y + (3500 * dt)); //the amount you add also has to be a ratio adding 1 to 100 versus 20 creates vastly diffrent deacclerations
+        mItems[i]->setSpeed(mItems[i]->getSpeed().x, mItems[i]->getSpeed().y + (3000 * dt)); //the amount you add also has to be a ratio adding 1 to 100 versus 20 creates vastly diffrent deacclerations
     }
 }
 
+
+/*
+Description: default constructer for a Game object, sets temp and deleteBox to nullptr and the game's state to NA
+
+Return: none
+
+Pre: none
+
+Post: a game object has been intialzied
+*/
 Game::Game()
 {
     temp = nullptr;
@@ -134,6 +183,16 @@ Game::Game()
     state = NA;
 }
 
+
+/*
+Description: simulates the game, creates the screen and runs the game loop
+
+Return: none
+
+Pre: none
+
+Post: none
+*/
 void Game::runGame(const std::string* goodC, const int& size1, const std::string* badC, const int& size2, const std::string* menuTex, const int& size3)
 {
     sf::Clock clock;
@@ -141,10 +200,14 @@ void Game::runGame(const std::string* goodC, const int& size1, const std::string
     sf::View gameView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(1920 , 1200)));
     window.create(s.getDesktopMode(), "Game"); //s.getDesktopMode() // sf::VideoMode({200, 200})
     window.setView(gameView);
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(120);
     
     if (loadTextures(goodC, size1, badC, size2) && mMenu.setUpMenu(menuTex, size3)) //Makes sure that all of the textures were loaded properly
     {
+        background.setTexture(&backText);
+        background.setSize(sf::Vector2f(1920, 1200));
+        background.setPosition(sf::Vector2f(0, 0));
+
         deleteBox = new sf::RectangleShape({ 7.f, 7.f });
         deleteBox->setFillColor(sf::Color::Transparent);
         int hold = 0;
@@ -160,12 +223,12 @@ void Game::runGame(const std::string* goodC, const int& size1, const std::string
             }
             if (state == PLAY)
             {
-                createMoveObj();
+                createObj();
                 moveObj(deltaTime);
-                checkDel();
                 checkDel(deleteBox);
 
                 window.clear();
+                window.draw(background);
                 drawGame();
                 window.display();
             }
@@ -185,6 +248,7 @@ void Game::runGame(const std::string* goodC, const int& size1, const std::string
                     state = EXIT;
                 }
                 window.clear();
+                window.draw(background);
                 mMenu.drawMenu(window);
                 window.display();
             }

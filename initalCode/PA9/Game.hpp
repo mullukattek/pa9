@@ -16,23 +16,27 @@ class Game
 private:
 	sf::RenderWindow window;
 	MainMenu mMenu;
+
 	std::vector<sf::Texture> goodCode, badCode; //want to use a vector for the graphics write a function which loads every graphic
+	sf::Texture backText;
+
 	std::vector<GameObject*> mItems;
 	GameObject* temp;
+
 	sf::Clock spawnTime, overAll;
-	sf::RectangleShape title, play, exit;
+	sf::RectangleShape title, play, exit, background;
+
 	GameState state;
 
 	sf::RectangleShape* deleteBox;
 
 	bool loadTextures(const std::string* goodC, const int& size1, const std::string* badC, const int& size2);
 
-	void checkDel();
 	void checkDel(const sf::RectangleShape* deleteBox);
 
 	void drawGame();
 
-	void createMoveObj();
+	void createObj();
 
 	void moveObj(const float& dt);
 public:
