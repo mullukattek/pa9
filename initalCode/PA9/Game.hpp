@@ -9,15 +9,17 @@
 typedef enum gameState
 {
 	NA = 0, PLAY, EXIT
-}GameState;
+} GameState;
 
 class Game
 {
 private:
+	int score; // i store player score
+
 	sf::RenderWindow window;
 	MainMenu mMenu;
 
-	std::vector<sf::Texture> goodCode, badCode; //want to use a vector for the graphics write a function which loads every graphic
+	std::vector<sf::Texture> goodCode, badCode;
 	sf::Texture backText;
 
 	std::vector<GameObject*> mItems;
@@ -33,12 +35,10 @@ private:
 	bool loadTextures(const std::string* goodC, const int& size1, const std::string* badC, const int& size2);
 
 	void checkDel(const sf::RectangleShape* deleteBox);
-
 	void drawGame();
-
 	void createObj();
-
 	void moveObj(const float& dt);
+
 public:
 	Game();
 

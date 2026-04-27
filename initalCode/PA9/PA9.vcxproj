@@ -193,6 +193,12 @@
     <Image Include="test2.jpg" />
     <Image Include="title.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="..\..\..\..\..\Desktop\arial.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\..\..\..\..\Desktop\slice.wav" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
