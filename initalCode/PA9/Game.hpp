@@ -5,6 +5,7 @@
 #include "BuggyCode.hpp"
 #include "CorrectCode.hpp"
 #include "MainMenu.hpp"
+#include <stdexcept>
 
 typedef enum gameState
 {
@@ -43,4 +44,5 @@ public:
 	Game();
 
 	void runGame(const std::string* goodC, const int& size1, const std::string* badC, const int& size2, const std::string* menuTex, const int& size3);
+	void runGame(const std::string* goodC, const int& size1, const std::string* badC, const int& size2, const std::string* menuTex, const int& size3, int Num);
 };

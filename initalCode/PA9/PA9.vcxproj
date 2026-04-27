@@ -154,6 +154,7 @@
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="MainMenu.hpp" />
+    <ClInclude Include="TestCase.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="back.png" />

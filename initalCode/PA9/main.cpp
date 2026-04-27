@@ -2,10 +2,13 @@
 #include "Game.hpp"
 #include "MainMenu.hpp"
 #include <random>
+#include "TestCase.h"
 
 int main()
 {
  
+   // Test::RunTests();
+
     std::string menuTextures[6] = { "title.png", "play.png", "howTo.png", "exit.png", "back.png", "howToScreen.png"};
     std::string good[9] = { "good1.png", "good2.png", "good3.png", "goodM1.png", "goodM2.png", "goodM3.png", "goodH1.png", "goodH2.png", "goodH3.png" },
         bad[18] = { "syntax1.png", "syntax2.png", "syntax3.png", "syntaxM1.png", "syntaxM2.png", "syntaxM3.png", "syntaxH1.png", "syntaxH2.png", "syntaxH3.png",
