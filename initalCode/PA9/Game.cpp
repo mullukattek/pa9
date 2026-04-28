@@ -11,23 +11,26 @@ Pre: none
 
 Post: The textures have been loaded and stored the correct vector
 */
-bool Game::loadTextures(const std::string* goodC, const int& size1, const std::string* badC, const int& size2)
-{
+bool Game::loadTextures(const std::string* goodC, const int& size1,
+    const std::string* badC, const int& size2) {
     sf::Texture temp;
     bool result = true;
-    for (int i = 0; i < size1; ++i)
-    {
-        result = temp.loadFromFile(goodC[i]);
-        if (!result) return result;
-        goodCode.push_back(temp);
-    }
 
-    for (int c = 0; c < size2; ++c)
-    {
-        result = temp.loadFromFile(badC[c]);
-        if (!result) return result;
-        badCode.push_back(temp);
-    }
+    // Good code: indices 0-2 easy, 3-5 medium, 6-8 hard
+    for (int i = 0; i < 3; i++) { result = temp.loadFromFile(goodC[i]); if (!result) return false; goodEasy.push_back(temp); }
+    for (int i = 3; i < 6; i++) { result = temp.loadFromFile(goodC[i]); if (!result) return false; goodMed.push_back(temp); }
+    for (int i = 6; i < 9; i++) { result = temp.loadFromFile(goodC[i]); if (!result) return false; goodHard.push_back(temp); }
+
+    // Syntax bad: indices 0-2 easy, 3-5 medium, 6-8 hard
+    for (int i = 0; i < 3; i++) { result = temp.loadFromFile(badC[i]);  if (!result) return false; badSynEasy.push_back(temp); }
+    for (int i = 3; i < 6; i++) { result = temp.loadFromFile(badC[i]);  if (!result) return false; badSynMed.push_back(temp); }
+    for (int i = 6; i < 9; i++) { result = temp.loadFromFile(badC[i]);  if (!result) return false; badSynHard.push_back(temp); }
+
+    // Logic bad: indices 9-11 easy, 12-14 medium, 15-17 hard
+    for (int i = 9; i < 12; i++) { result = temp.loadFromFile(badC[i]); if (!result) return false; badLogEasy.push_back(temp); }
+    for (int i = 12; i < 15; i++) { result = temp.loadFromFile(badC[i]); if (!result) return false; badLogMed.push_back(temp); }
+    for (int i = 15; i < 18; i++) { result = temp.loadFromFile(badC[i]); if (!result) return false; badLogHard.push_back(temp); }
+
     result = backText.loadFromFile("background.png");
     return result;
 }
@@ -66,6 +69,24 @@ void Game::checkDel(const sf::RectangleShape* deleteBox)
     }
 }
 
+/* Description: returns speed range and spawn interval based on current difficulty level
+   Pre:  diffLevel is 0, 1, or 2
+   Post: out-params filled with appropriate ranges */
+void Game::getDifficultyParams(float& minY, float& maxY,
+    float& minSpawn, float& maxSpawn) {
+    if (diffLevel == 0) {       // easy — slow and relaxed
+        minY = 1800; maxY = 2200;
+        minSpawn = 1.0f; maxSpawn = 2.0f;
+    }
+    else if (diffLevel == 1) { // medium — noticeably faster
+        minY = 2100; maxY = 2600;
+        minSpawn = 0.7f; maxSpawn = 1.5f;
+    }
+    else {                    // hard — fast and frequent
+        minY = 2500; maxY = 3200;
+        minSpawn = 0.4f; maxSpawn = 1.0f;
+    }
+}
 
 /*
 Description: Creates new objects randomly as objects are deleted from the screen, created with a random velocity, position (focused in the middle of the screen), and spawn time
@@ -76,43 +97,75 @@ Pre: Textures have been properly loaded
 
 Post: New objects are created with random speeds and positions
 */
-void Game::createObj()
-{
-    std::random_device random;
-    std::uniform_real_distribution<float> pos1(640, 1920 - 640); //random x position focused in the middle of the screen
-    std::uniform_int_distribution<int> item(1, 10); //random item (buggy or normal)
-    std::uniform_real_distribution<float> xSpeed(0, 600); 
-    std::uniform_real_distribution<float> ySpeed(2100, 2700); //similar logic for y speed
-    std::uniform_int_distribution<int> spawnT(1, 2);
-    std::uniform_int_distribution<int> synLog(1, 2); //chooses between logic or syntax
+void Game::createObj() {
+    // --- update difficulty based on score ---
+    if (score >= 15) diffLevel = 2;  // medium + hard textures
+    else if (score >= 5)  diffLevel = 1;  // easy + medium textures
+    else                  diffLevel = 0;  // easy only
 
-    {
-        if (item(random) <= 6) //higher probablity that a correct code item will spawn
-        {
-            temp = new CorrectCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), goodCode[8]);
-        }
-        else
-        {
-            if (synLog(random) == 1)
-                temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[4], SYNTAX);
-            else
-                temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[5], LOGIC);
-        }
-        temp->setScale(sf::Vector2f(4, 4));
+    std::random_device random;
+    std::uniform_real_distribution<float> pos1(640, 1920 - 640);
+    std::uniform_int_distribution<int>    item(1, 10);   // 1-6 = correct, 7-10 = buggy
+    std::uniform_int_distribution<int>    synLog(1, 2);  // 1=syntax, 2=logic
+    std::uniform_int_distribution<int>    texPick(0, 2); // pick one of 3 textures in bucket
+
+    // get speed + spawn ranges for this difficulty
+    float minY, maxY, minSpawn, maxSpawn;
+    getDifficultyParams(minY, maxY, minSpawn, maxSpawn);
+
+    std::uniform_real_distribution<float> xSpeed(0, 600);
+    std::uniform_real_distribution<float> ySpeed(minY, maxY);
+    std::uniform_real_distribution<float> spawnT(minSpawn, maxSpawn);
+
+    // pick which texture bucket(s) are active this difficulty level
+    // diffLevel 0: easy only   diffLevel 1: easy or medium   diffLevel 2: medium or hard
+    std::uniform_int_distribution<int> tierPick(0, 1); // choose between 2 active tiers
+    int tier = (diffLevel == 0) ? 0 : tierPick(random); // 0=lower tier, 1=upper tier
+
+    if (item(random) <= 6) {
+        // correct code — pick texture from the right tier
+        sf::Texture& tex = (diffLevel == 0) ? goodEasy[texPick(random)]
+            : (diffLevel == 1) ? (tier == 0 ? goodEasy[texPick(random)]
+                : goodMed[texPick(random)])
+            : (tier == 0 ? goodMed[texPick(random)]
+                : goodHard[texPick(random)]);
+        temp = new CorrectCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), tex);
     }
-    if (mItems.size() < 4 && spawnTime.getElapsedTime().asSeconds() >= temp->getSpawnTime())
-    {
-        temp->setPosition(sf::Vector2f(pos1(random), 1200));
-        if (temp->getPosition().x > 1920 / 2) //Makes sure that objects don't immediately go off the side of the screen 
-        {
-            temp->setSpeed(-temp->getSpeed().x, temp->getSpeed().y);
+    else {
+        // buggy code — syntax or logic, same tier logic
+        if (synLog(random) == 1) {
+            sf::Texture& tex = (diffLevel == 0) ? badSynEasy[texPick(random)]
+                : (diffLevel == 1) ? (tier == 0 ? badSynEasy[texPick(random)]
+                    : badSynMed[texPick(random)])
+                : (tier == 0 ? badSynMed[texPick(random)]
+                    : badSynHard[texPick(random)]);
+            temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), tex, SYNTAX);
         }
+        else {
+            sf::Texture& tex = (diffLevel == 0) ? badLogEasy[texPick(random)]
+                : (diffLevel == 1) ? (tier == 0 ? badLogEasy[texPick(random)]
+                    : badLogMed[texPick(random)])
+                : (tier == 0 ? badLogMed[texPick(random)]
+                    : badLogHard[texPick(random)]);
+            temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), tex, LOGIC);
+        }
+    }
+
+    temp->setScale(sf::Vector2f(4, 4));
+
+    // max objects on screen also grows with difficulty
+    int maxOnScreen = (diffLevel == 0) ? 3 : (diffLevel == 1) ? 4 : 5;
+
+    if ((int)mItems.size() < maxOnScreen &&
+        spawnTime.getElapsedTime().asSeconds() >= temp->getSpawnTime()) {
+        temp->setPosition(sf::Vector2f(pos1(random), 1200));
+        if (temp->getPosition().x > 1920 / 2)
+            temp->setSpeed(-temp->getSpeed().x, temp->getSpeed().y);
         mItems.push_back(temp);
         spawnTime.restart();
         temp = nullptr;
     }
 }
-
 /*
 Description: draws all of the items need for the game
 
@@ -172,12 +225,12 @@ Pre: none
 
 Post: a game object has been intialzied
 */
-Game::Game()
-{
+Game::Game() {
     temp = nullptr;
     deleteBox = nullptr;
     state = NA;
     score = 0;
+    diffLevel = 0;   // ADD THIS — start at easy
 }
 
 
