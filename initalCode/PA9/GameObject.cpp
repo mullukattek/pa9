@@ -26,10 +26,6 @@ void GameObject::update()
     move(velocity);
 }
 
-// Render function 
-void GameObject::render() {
-   
-}
 
 sf::Vector2f GameObject::getSpeed() const
 {
@@ -47,14 +43,3 @@ int GameObject::getSpawnTime() const
     return timeSpawn;
 }
 
-
-// Set new position
-//void GameObject::setPosition(float newX, float newY) {
-//    x = newX;
-//    y = newY;
-//}
-//
-//// Set speed
-//void GameObject::setSpeed(float spd) {
-//    speed = spd;
-//}

@@ -1,6 +1,4 @@
-
 #include "Game.hpp"
-#include <iostream>
 
 /*
 Description: Loads the good code textures and the bad code textures and stores them in the vectors goodCode and badCode respectivly
@@ -76,30 +74,28 @@ Pre: Textures have been properly loaded
 
 Post: New objects are created with random speeds and positions
 */
-void Game::createObj()
+bool Game::createObj()
 {
     std::random_device random;
     std::uniform_real_distribution<float> pos1(640, 1920 - 640); //random x position focused in the middle of the screen
     std::uniform_int_distribution<int> item(1, 10); //random item (buggy or normal)
-    std::uniform_real_distribution<float> xSpeed(0, 600); 
+    std::uniform_real_distribution<float> xSpeed(0, 600);
     std::uniform_real_distribution<float> ySpeed(2100, 2700); //similar logic for y speed
     std::uniform_int_distribution<int> spawnT(1, 2);
     std::uniform_int_distribution<int> synLog(1, 2); //chooses between logic or syntax
 
+    if (item(random) <= 6) //higher probablity that a correct code item will spawn
     {
-        if (item(random) <= 6) //higher probablity that a correct code item will spawn
-        {
-            temp = new CorrectCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), goodCode[8]);
-        }
-        else
-        {
-            if (synLog(random) == 1)
-                temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[4], SYNTAX);
-            else
-                temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[5], LOGIC);
-        }
-        temp->setScale(sf::Vector2f(4, 4));
+        temp = new CorrectCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), goodCode[8]);
     }
+    else
+    {
+        if (synLog(random) == 1)
+            temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[4], SYNTAX);
+        else
+            temp = new BuggyCode(0, 0, xSpeed(random), -ySpeed(random), spawnT(random), badCode[5], LOGIC);
+    }
+    temp->setScale(sf::Vector2f(4, 4));
     if (mItems.size() < 4 && spawnTime.getElapsedTime().asSeconds() >= temp->getSpawnTime())
     {
         temp->setPosition(sf::Vector2f(pos1(random), 1200));
@@ -110,7 +106,9 @@ void Game::createObj()
         mItems.push_back(temp);
         spawnTime.restart();
         temp = nullptr;
+        return true;
     }
+    return false;
 }
 
 /*
@@ -140,6 +138,7 @@ void Game::drawGame()
     {
         deleteBox->setSize({ 0.f,0.f });
         deleteBox->setPosition({ 0.f,0.f });
+        throw std::runtime_error("");
     }
 }
 
@@ -193,7 +192,6 @@ Post: none
 void Game::runGame(const std::string* goodC, const int& size1, const std::string* badC, const int& size2, const std::string* menuTex, const int& size3)
 {
     sf::Clock clock;
-
     // i use this to stop game after 60 seconds
     sf::Clock gameTimer;
     float maxTime = 60.0f;
@@ -204,111 +202,86 @@ void Game::runGame(const std::string* goodC, const int& size1, const std::string
     window.create(s.getDesktopMode(), "score: 0");
     window.setView(gameView);
     window.setFramerateLimit(120);
-    
-    if (loadTextures(goodC, size1, badC, size2) && mMenu.setUpMenu(menuTex, size3)) //Makes sure that all of the textures were loaded properly
+
+    loadTextures(goodC, size1, badC, size2);
+    mMenu.setUpMenu(menuTex, size3); //Makes sure that all of the textures were loaded properly
+
+    background.setTexture(&backText);
+    background.setSize(sf::Vector2f(1920, 1200));
+    background.setPosition(sf::Vector2f(0, 0));
+
+    deleteBox = new sf::RectangleShape({ 7.f, 7.f });
+    deleteBox->setFillColor(sf::Color::Transparent);
+
+    int hold = 0;
+
+    while (window.isOpen())
     {
-        background.setTexture(&backText);
-        background.setSize(sf::Vector2f(1920, 1200));
-        background.setPosition(sf::Vector2f(0, 0));
-
-        deleteBox = new sf::RectangleShape({ 7.f, 7.f });
-        deleteBox->setFillColor(sf::Color::Transparent);
-
-        int hold = 0;
-
-        while (window.isOpen())
+        float deltaTime = clock.restart().asSeconds(); //makes movement of objects independent from framerate (it will move at a similar speed regardless of the frame rate)
+        while (const std::optional event = window.pollEvent())
         {
-            float deltaTime = clock.restart().asSeconds(); //makes movement of objects independent from framerate (it will move at a similar speed regardless of the frame rate)
-            while (const std::optional event = window.pollEvent())
+            if (event->is<sf::Event::Closed>())
             {
-                if (event->is<sf::Event::Closed>())
-                {
-                    window.close();
-                }
+                window.close();
             }
-            if (state == PLAY)
-            {
-                createObj();
-                moveObj(deltaTime);
-                checkDel(deleteBox);
-
-                window.clear();
-                window.draw(background);
-                drawGame();
-                window.display();
-            }
-            else
-            {
-                hold = mMenu.menuLogic(window);
-                if (hold == 1)
-                {
-                    state = PLAY;
-                }
-                else if (hold == 2)
-                {
-                    state = EXIT;
-                }
-                window.clear();
-                window.draw(background);
-                mMenu.drawMenu(window);
-                window.display();
-            }
-
         }
-    }
-    else
-    {
-        std::cout << "failed to load textures" << std::endl;
+        if (state == PLAY)
+        {
+            createObj();
+            moveObj(deltaTime);
+            checkDel(deleteBox);
+
+            window.clear();
+            window.draw(background);
+
+            drawGame();
+
+            window.display();
+        }
+        else
+        {
+            hold = mMenu.menuLogic(window);
+            if (hold == 1)
+            {
+                state = PLAY;
+            }
+            else if (hold == 2)
+            {
+                state = EXIT;
+            }
+            window.clear();
+            window.draw(background);
+            mMenu.drawMenu(window);
+            window.display();
+        }
     }
 }
 
-
-//Only called in TestCase.h
+//Handles Test case 1
 void Game::runGame(const std::string* goodC, const int& size1, const std::string* badC, const int& size2, const std::string* menuTex, const int& size3, int Num)
 {
+    sf::VideoMode s;
+    sf::View gameView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(1920, 1200)));
+    window.create(s.getDesktopMode(), "score: 0");
+    window.setView(gameView);
+    window.setFramerateLimit(120);
+    loadTextures(goodC, size1, badC, size2);
+    mMenu.setUpMenu(menuTex, size3);
+    background.setTexture(&backText);
+    background.setSize(sf::Vector2f(1920, 1200));
+    background.setPosition(sf::Vector2f(0, 0));
+    while (window.isOpen())
     {
-        sf::Clock clock;
-        sf::VideoMode s;
-        sf::View gameView(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(1920, 1200)));
-        window.create(s.getDesktopMode(), "Game");
-        window.setView(gameView);
-        window.setFramerateLimit(120);
-
-        //Makes sure that all of the textures were loaded properly
-        loadTextures(goodC, size1, badC, size2) && mMenu.setUpMenu(menuTex, size3);
-
-        background.setTexture(&backText);
-        background.setSize(sf::Vector2f(1920, 1200));
-        background.setPosition(sf::Vector2f(0, 0));
-
-        deleteBox = new sf::RectangleShape({ 7.f, 7.f });
-        deleteBox->setFillColor(sf::Color::Transparent);
-        int hold = 0;
-        while (window.isOpen())
+        while (const std::optional event = window.pollEvent())
         {
-            float deltaTime = clock.restart().asSeconds(); //makes movement of objects independent from framerate (it will move at a similar speed regardless of the frame rate)
-            while (const std::optional event = window.pollEvent())
+            if (event->is<sf::Event::Closed>())
             {
-                if (event->is<sf::Event::Closed>())
-                {
-                    window.close();
-                }
-            }
-            if (state == PLAY)
-            {
-                createObj();
-                moveObj(deltaTime);
-                checkDel(deleteBox);
-
-                window.clear();
-                window.draw(background);
-                drawGame();
-                window.display();
-
-                state = PLAY;
-
-                throw std::runtime_error("");
+                window.close();
             }
         }
+        window.draw(background);
+        drawGame();
+        window.display();
+        throw std::runtime_error("");
     }
 }

@@ -7,7 +7,7 @@
 int main()
 {
  
-   // Test::RunTests();
+   Test::RunTests();
 
     std::string menuTextures[6] = { "title.png", "play.png", "howTo.png", "exit.png", "back.png", "howToScreen.png"};
     std::string good[9] = { "good1.png", "good2.png", "good3.png", "goodM1.png", "goodM2.png", "goodM3.png", "goodH1.png", "goodH2.png", "goodH3.png" },
@@ -16,6 +16,7 @@ int main()
     Game game;
    
     game.runGame(good, 9, bad, 18, menuTextures, 6);
+    
 
     return 0;
 }

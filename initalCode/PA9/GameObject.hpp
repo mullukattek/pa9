@@ -24,9 +24,6 @@ public:
     // Virtual update function 
     virtual void update();
 
-    // Virtual render function (display object)
-    virtual void render();
-
     sf::Vector2f getSpeed() const;
 
     void setSpeed(const float& xSpd, const float& ySpd);
@@ -35,10 +32,5 @@ public:
 
     virtual int onSlice() = 0;
 
-    // Set position
-   // void setPosition(float newX, float newY);
-
-    // Set speed
-   // void setSpeed(float spd);
 };
 

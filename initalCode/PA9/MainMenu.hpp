@@ -26,6 +26,6 @@ public:
 
 	bool setUpMenu(const std::string* arr, const int& size);
 
-	void drawMenu(sf::RenderWindow& window);
+	bool drawMenu(sf::RenderWindow& window);
 
 };

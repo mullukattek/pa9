@@ -22,15 +22,3 @@ int CodeItem::onSlice() {
     sliced = true; // Mark the object as sliced
     return 0;      // have to rewrite next class---> no score awarded for now
 }
-
-// Render function to display the object
-void CodeItem::render() {
-    // Outputs the object's current position (x, y) to the console
-    //std::cout << "CodeItem at (" << x << ", " << y << ")" << std::endl;
-}
-
-bool CodeItem::isSliced()
-{
-    return sliced;
-}
-

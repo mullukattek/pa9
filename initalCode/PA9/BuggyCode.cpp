@@ -32,13 +32,3 @@ int BuggyCode::onSlice()
 
     return 0;
 }
-
-// Render shows which type it is
-void BuggyCode::render() {
-    if (type == SYNTAX) {
-        //std::cout << "Syntax Error Code at (" <<  << ", " << y << ")" << std::endl;
-    }
-    else {
-        //std::cout << "Logic Error Code at (" << x << ", " << y << ")" << std::endl;
-    }
-}

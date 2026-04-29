@@ -94,7 +94,7 @@ Pre: The menu has already been set up
 
 Post: the menu is drawn to the screen correctly
 */
-void MainMenu::drawMenu(sf::RenderWindow& window)
+bool MainMenu::drawMenu(sf::RenderWindow& window)
 {
     if (state == MAIN)
     {
@@ -102,11 +102,13 @@ void MainMenu::drawMenu(sf::RenderWindow& window)
         window.draw(play);
         window.draw(exit);
         window.draw(howTo);
+        return true;
     }
     else if (state == HOWTO)
     {
         window.draw(howToScreen);
         window.draw(back);
+        return true;
     }
 }
 

@@ -19,8 +19,4 @@ public:
     // Virtual function for slicing 
     virtual int onSlice() override; // should returns points
 
-    // Override render
-    virtual void render() override;
-
-    bool isSliced();
 };

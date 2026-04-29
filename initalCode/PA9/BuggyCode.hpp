@@ -27,12 +27,8 @@ public:
 
     virtual ~BuggyCode();
 
-    
     // Polymorphic function
     // Returns score penalty based on type
     int onSlice() override;
 
-
-    // Override render to display type
-    void render() override;
 };
