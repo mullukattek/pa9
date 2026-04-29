@@ -26,9 +26,9 @@ As the game progresses, the difficulty increases with faster-moving objects and 
 ---
 
 Technologies Used:
-*C++
-*SFML (Simple and Fast Multimedia Library)
-*Object-Oriented Programming (OOP)
+* C++
+* SFML (Simple and Fast Multimedia Library)
+* Object-Oriented Programming (OOP)
 
 ---
 
@@ -108,7 +108,7 @@ GameObject (base class)
 
 GENERATIVE AI USAGE:
 * Debugging assistance
-* Code structure suggestions
+* Code suggestions for BONUS
 * README and documentation formatting
 ---
 Video Link: 
