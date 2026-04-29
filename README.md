@@ -7,9 +7,6 @@ Project Title: Code Ninja
 Creators: 
 Jacob Langer (lab section 8), Vincent Rampp (lab section 12), Kristina Mullukatte (lab section 7), Raahina Sheik Syed Ali (lab section 7) 
 
----
-Video Demo Link:
-
 
 ---
 
@@ -111,6 +108,6 @@ GENERATIVE AI USAGE:
 * Debugging assistance
 * Code structure suggestions
 * README and documentation formatting
-
+---
 Video Link: 
 https://youtu.be/NpoIJl8PgNw
