@@ -29,3 +29,46 @@ Two players can connect and play the game together using socket communication.
 
 Creators: 
 Jacob Langer (lab section 8), Vincent Rampp (lab section 12), Kristina Mullukatte (lab section 7), Raahina Sheik Syed Ali (lab section 7) 
+
+
+Features:
+      Mouse-Based Slicing: Slice objects using mouse movement
+      Educational Gameplay: Identify correct vs incorrect code
+      Scoring System:
+            Correct Code → +1
+            Syntax Error → -1
+            Logic Error → -2
+      Difficulty Progression System:
+            Easy → Medium → Hard (based on score)
+      Dynamic Difficulty Scaling:
+            Faster objects over time
+            Increased spawn rate
+            More buggy code appears
+      Graphical Interface using SFML
+      Object-Oriented Design:
+            Inheritance & polymorphism
+      Main Menu System (Play / Exit / Instructions)
+
+
+Class Design (Inheritance)
+GameObject (Base Class)
+   ↓
+CodeItem
+   ↓
+ ├── CorrectCode (+1)
+ └── BuggyCode (-1 / -2)
+
+
+Technologies Used:
+C++
+SFML (Simple and Fast Multimedia Library)
+Object-Oriented Programming (OOP)
+      Inheritance
+      Polymorphism
+
+Generative AI Usage
+Used for:
+      Debugging
+      Code suggestions
+      Documentation
+       
