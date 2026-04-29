@@ -62,5 +62,8 @@ Generative AI Usage
 Used for:
       Debugging
       Code suggestions
-      Documentation
+      Documentation (README file)
+      Bonus - Socket Implementation
+      How to use WINSOCK for Bonus 
+      
        
