@@ -93,8 +93,8 @@ Pre: none
 
 Post: The textures have been loaded and stored the correct vector
 */
-bool Game::loadTextures(const std::string* goodC, const int& size1,
-    const std::string* badC, const int& size2) {
+bool Game::loadTextures(const std::string* goodC, const int& size1, const std::string* badC, const int& size2) 
+{
     sf::Texture temp;
     bool result = true;
 
@@ -327,13 +327,16 @@ Post: none
 */
 void Game::runGame(const std::string* goodC, const int& size1, const std::string* badC, const int& size2, const std::string* menuTex, const int& size3)
 {
+    loadTextures(goodC, size1, badC, size2);
+    mMenu.setUpMenu(menuTex, size3);
+
     // i start the receiver so it listens for scores
     std::thread receiverThread(runReceiver);
     receiverThread.detach();
 
     // i ask for player name
     std::string playerName;
-    std::cout << "enter your name: ";
+    std::cout << "Enter your name: ";
     std::cin >> playerName;
     sf::Clock clock;
 
@@ -347,123 +350,114 @@ void Game::runGame(const std::string* goodC, const int& size1, const std::string
     window.create(s.getDesktopMode(), "score: 0");
     window.setView(gameView);
     window.setFramerateLimit(120);
-    
-    if (loadTextures(goodC, size1, badC, size2) && mMenu.setUpMenu(menuTex, size3)) //Makes sure that all of the textures were loaded properly
+
+    background.setTexture(&backText);
+    background.setSize(sf::Vector2f(1920, 1200));
+    background.setPosition(sf::Vector2f(0, 0));
+
+    deleteBox = new sf::RectangleShape({ 7.f, 7.f });
+    deleteBox->setFillColor(sf::Color::Transparent);
+
+    int hold = 0;
+
+    while (window.isOpen())
     {
-        background.setTexture(&backText);
-        background.setSize(sf::Vector2f(1920, 1200));
-        background.setPosition(sf::Vector2f(0, 0));
-
-        deleteBox = new sf::RectangleShape({ 7.f, 7.f });
-        deleteBox->setFillColor(sf::Color::Transparent);
-
-        int hold = 0;
-
-        while (window.isOpen())
+        float deltaTime = clock.restart().asSeconds(); //makes movement of objects independent from framerate (it will move at a similar speed regardless of the frame rate)
+        while (const std::optional event = window.pollEvent())
         {
-            float deltaTime = clock.restart().asSeconds(); //makes movement of objects independent from framerate (it will move at a similar speed regardless of the frame rate)
-            while (const std::optional event = window.pollEvent())
+            if (event->is<sf::Event::Closed>())
             {
-                if (event->is<sf::Event::Closed>())
-                {
-                    window.close();
-                }
+                window.close();
             }
-            if (state == PLAY)
+        }
+        if (state == PLAY)
+        {
+            // i check if 60 seconds passed
+            if (gameTimer.getElapsedTime().asSeconds() >= maxTime)
             {
-                // i check if 60 seconds passed
-                if (gameTimer.getElapsedTime().asSeconds() >= maxTime)
+                std::cout << "game over! final score: " << score << std::endl;
+
+                // i send score using sockets
+                WSADATA wsa;
+                WSAStartup(MAKEWORD(2, 2), &wsa);
+
+                SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+
+                sockaddr_in server;
+                server.sin_family = AF_INET;
+                server.sin_port = htons(53000);
+                server.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+                connect(sock, (struct sockaddr*)&server, sizeof(server));
+
+                std::string message = playerName + " " + std::to_string(score);
+                send(sock, message.c_str(), (int)message.size() + 1, 0);
+
+                closesocket(sock);
+                WSACleanup();
+
+                // i wait so file updates
+                std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+                // i read leaderboard
+                std::vector<std::pair<std::string, int>> players;
+
+                std::ifstream readFile("scores.txt");
+                std::string name;
+                int fileScore;
+
+                while (readFile >> name >> fileScore)
                 {
-                    std::cout << "game over! final score: " << score << std::endl;
+                    players.push_back({ name, fileScore });
+                }
+                readFile.close();
 
-                    // i send score using sockets
-                    WSADATA wsa;
-                    WSAStartup(MAKEWORD(2, 2), &wsa);
-
-                    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-
-                    sockaddr_in server;
-                    server.sin_family = AF_INET;
-                    server.sin_port = htons(53000);
-                    server.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-                    connect(sock, (struct sockaddr*)&server, sizeof(server));
-
-                    std::string message = playerName + " " + std::to_string(score);
-                    send(sock, message.c_str(), (int)message.size() + 1, 0);
-
-                    closesocket(sock);
-                    WSACleanup();
-
-                    // i wait so file updates
-                    std::this_thread::sleep_for(std::chrono::milliseconds(300));
-
-                    // i read leaderboard
-                    std::vector<std::pair<std::string, int>> players;
-
-                    std::ifstream readFile("scores.txt");
-                    std::string name;
-                    int fileScore;
-
-                    while (readFile >> name >> fileScore)
+                // i sort highest to lowest
+                std::sort(players.begin(), players.end(), [](auto a, auto b)
                     {
-                        players.push_back({ name, fileScore });
-                    }
-                    readFile.close();
+                        return a.second > b.second;
+                    });
 
-                    // i sort highest to lowest
-                    std::sort(players.begin(), players.end(), [](auto a, auto b)
-                        {
-                            return a.second > b.second;
-                        });
+                std::cout << "\n--- top 3 leaderboard ---\n";
 
-                    std::cout << "\n--- top 3 leaderboard ---\n";
+                int limit = players.size() < 3 ? players.size() : 3;
 
-                    int limit = players.size() < 3 ? players.size() : 3;
-
-                    for (int i = 0; i < limit; i++)
-                    {
-                        std::cout << i + 1 << ". "
-                            << players[i].first << " : "
-                            << players[i].second << std::endl;
-                    }
-
-                    window.close();
+                for (int i = 0; i < limit; i++)
+                {
+                    std::cout << i + 1 << ". "
+                        << players[i].first << " : "
+                        << players[i].second << std::endl;
                 }
-                createObj();
-                moveObj(deltaTime);
-                checkDel(deleteBox);
 
-                window.clear();
-                window.draw(background);
-                drawGame();
-                window.display();
+                window.close();
             }
-            else
+            createObj();
+            moveObj(deltaTime);
+            checkDel(deleteBox);
+
+            window.clear();
+            window.draw(background);
+            drawGame();
+            window.display();
+        }
+        else
+        {
+            hold = mMenu.menuLogic(window);
+            if (hold == 1)
             {
-                hold = mMenu.menuLogic(window);
-                if (hold == 1)
-                {
-                    state = PLAY;
-                }
-                else if (hold == 2)
-                {
-                    state = EXIT;
-                }
-                window.clear();
-                window.draw(background);
-                mMenu.drawMenu(window);
-                window.display();
+                state = PLAY;
             }
-
+            else if (hold == 2)
+            {
+                state = EXIT;
+            }
+            window.clear();
+            window.draw(background);
+            mMenu.drawMenu(window);
+            window.display();
         }
     }
-    else
-    {
-        std::cout << "failed to load textures" << std::endl;
-    }
 }
-
 
 //Only called in TestCase.h
 void Game::runGame(const std::string* goodC, const int& size1, const std::string* badC, const int& size2, const std::string* menuTex, const int& size3, int Num)
@@ -496,6 +490,7 @@ void Game::runGame(const std::string* goodC, const int& size1, const std::string
                     window.close();
                 }
             }
+            state = PLAY;
             if (state == PLAY)
             {
                 createObj();

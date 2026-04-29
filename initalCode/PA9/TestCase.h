@@ -25,7 +25,7 @@ namespace Test
 	void TestCase5();
 }
 
-
+//Simply Run each Test function
 void Test::RunTests()
 {
 	Test::TestCase1();
@@ -51,6 +51,7 @@ void Test::TestCase1()
 		std::cout << "#1 Test successful" << std::endl;
 	}
 };
+
 //Ensures textures load prior to game run, The test forces the textures to be bad and cause a fail load, in which case it will print a Test successful
 void Test::TestCase2()
 {
@@ -61,7 +62,7 @@ void Test::TestCase2()
 
 	std::string menuTextures[6] = { "title.png", "play.png", "howTo.png", "exit.png", "back.png", "howToScreen.png" };
 	try {
-		Temp.runGame(good, 9, bad, 19, menuTextures, 0);
+		Temp.runGame(good, 9, bad, 18, menuTextures, 7);
 		std::cout << "#2 Test failed" << std::endl;
 	}
 	catch (std::runtime_error)
@@ -114,7 +115,7 @@ void Test::TestCase5()
 				   "logic1.png", "logic2.png", "logic3.png", "logicM1.png", "logicM2.png", "logicM3.png", "logicH1.png", "logicH2.png", "logicH3.png" };
 	std::string menuTextures[6] = { "title.png", "play.png", "howTo.png", "exit.png", "back.png", "howToScreen.png" };
 	try {
-		Temp.runGame(good, 9, bad, 19, menuTextures, 0, 1);
+		Temp.runGame(good, 9, bad, 19, menuTextures, 6, 1);
 		std::cout << "#5 Test failed" << std::endl;
 	}
 	catch (std::runtime_error) {
