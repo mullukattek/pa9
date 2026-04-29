@@ -24,10 +24,12 @@ The player uses mouse movements to “slice” through the code:
 As the game progresses, the difficulty increases with faster-moving objects and more complex code snippets, challenging the player’s reaction time and programming knowledge.
 
 ---
+
 Technologies Used:
-C++
-SFML (Simple and Fast Multimedia Library)
-Object-Oriented Programming (OOP)
+*C++
+*SFML (Simple and Fast Multimedia Library)
+*Object-Oriented Programming (OOP)
+
 ---
 
 HOW TO RUN THE PROGRAM:
