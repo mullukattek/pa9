@@ -1,7 +1,89 @@
 
 #include "Game.hpp"
 #include <iostream>
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#include <winsock2.h>
+#pragma comment(lib, "ws2_32.lib")
 
+#include <thread>
+#include <sstream>
+#include <fstream>
+#include <algorithm>
+#include <vector>
+#include <chrono>
+
+/*
+i use this to receive scores using sockets and save them to a file. i also used AI to help with the bonus extra credit
+more information in the README file.
+*/
+void runReceiver()
+{
+    // i start winsock so i can use sockets
+    WSADATA wsa;
+    WSAStartup(MAKEWORD(2, 2), &wsa);
+
+    // i create server and client variables
+    SOCKET serverSock;
+    SOCKET clientSock;
+    sockaddr_in server;
+    sockaddr_in client;
+    int clientSize = sizeof(sockaddr_in);
+
+    // i create the server socket
+    serverSock = socket(AF_INET, SOCK_STREAM, 0);
+
+    // i set up the server
+    server.sin_family = AF_INET;
+    server.sin_addr.s_addr = INADDR_ANY;
+    server.sin_port = htons(53000);
+
+    // i bind and listen
+    bind(serverSock, (struct sockaddr*)&server, sizeof(server));
+    listen(serverSock, 3);
+
+    // i keep listening forever
+    while (true)
+    {
+        clientSock = accept(serverSock, (struct sockaddr*)&client, &clientSize);
+
+        // i receive the message
+        char message[100] = "";
+        recv(clientSock, message, 100, 0);
+
+        // i split into name and score
+        std::string playerName;
+        int playerScore = 0;
+
+        std::stringstream ss(message);
+        ss >> playerName >> playerScore;
+
+        std::vector<std::pair<std::string, int>> players;
+
+        // i read old scores
+        std::ifstream inFile("scores.txt");
+        std::string oldName;
+        int oldScore;
+
+        while (inFile >> oldName >> oldScore)
+        {
+            players.push_back({ oldName, oldScore });
+        }
+        inFile.close();
+
+        // i add new score
+        players.push_back({ playerName, playerScore });
+
+        // i save everything back
+        std::ofstream outFile("scores.txt");
+        for (int i = 0; i < players.size(); i++)
+        {
+            outFile << players[i].first << " " << players[i].second << std::endl;
+        }
+        outFile.close();
+
+        closesocket(clientSock);
+    }
+}
 /*
 Description: Loads the good code textures and the bad code textures and stores them in the vectors goodCode and badCode respectivly
 
@@ -245,6 +327,14 @@ Post: none
 */
 void Game::runGame(const std::string* goodC, const int& size1, const std::string* badC, const int& size2, const std::string* menuTex, const int& size3)
 {
+    // i start the receiver so it listens for scores
+    std::thread receiverThread(runReceiver);
+    receiverThread.detach();
+
+    // i ask for player name
+    std::string playerName;
+    std::cout << "enter your name: ";
+    std::cin >> playerName;
     sf::Clock clock;
 
     // i use this to stop game after 60 seconds
@@ -281,6 +371,65 @@ void Game::runGame(const std::string* goodC, const int& size1, const std::string
             }
             if (state == PLAY)
             {
+                // i check if 60 seconds passed
+                if (gameTimer.getElapsedTime().asSeconds() >= maxTime)
+                {
+                    std::cout << "game over! final score: " << score << std::endl;
+
+                    // i send score using sockets
+                    WSADATA wsa;
+                    WSAStartup(MAKEWORD(2, 2), &wsa);
+
+                    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+
+                    sockaddr_in server;
+                    server.sin_family = AF_INET;
+                    server.sin_port = htons(53000);
+                    server.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+                    connect(sock, (struct sockaddr*)&server, sizeof(server));
+
+                    std::string message = playerName + " " + std::to_string(score);
+                    send(sock, message.c_str(), (int)message.size() + 1, 0);
+
+                    closesocket(sock);
+                    WSACleanup();
+
+                    // i wait so file updates
+                    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+                    // i read leaderboard
+                    std::vector<std::pair<std::string, int>> players;
+
+                    std::ifstream readFile("scores.txt");
+                    std::string name;
+                    int fileScore;
+
+                    while (readFile >> name >> fileScore)
+                    {
+                        players.push_back({ name, fileScore });
+                    }
+                    readFile.close();
+
+                    // i sort highest to lowest
+                    std::sort(players.begin(), players.end(), [](auto a, auto b)
+                        {
+                            return a.second > b.second;
+                        });
+
+                    std::cout << "\n--- top 3 leaderboard ---\n";
+
+                    int limit = players.size() < 3 ? players.size() : 3;
+
+                    for (int i = 0; i < limit; i++)
+                    {
+                        std::cout << i + 1 << ". "
+                            << players[i].first << " : "
+                            << players[i].second << std::endl;
+                    }
+
+                    window.close();
+                }
                 createObj();
                 moveObj(deltaTime);
                 checkDel(deleteBox);
