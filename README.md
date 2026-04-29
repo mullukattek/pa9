@@ -50,14 +50,6 @@ Features:
       Main Menu System (Play / Exit / Instructions)
 
 
-Class Design (Inheritance)
-GameObject (Base Class)
-   ↓
-CodeItem
-   ↓
- ├── CorrectCode (+1)
- └── BuggyCode (-1 / -2)
-
 
 Technologies Used:
 C++
