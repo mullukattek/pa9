@@ -18,10 +18,16 @@ class Game
 private:
 	int score; // i store player score
 
+	// tracks difficulty level: 0=easy, 1=easy+medium, 2=medium+hard
+	int diffLevel;
+
 	sf::RenderWindow window;
 	MainMenu mMenu;
 
-	std::vector<sf::Texture> goodCode, badCode;
+	std::vector<sf::Texture> goodEasy, goodMed, goodHard;
+	std::vector<sf::Texture> badSynEasy, badSynMed, badSynHard;
+	std::vector<sf::Texture> badLogEasy, badLogMed, badLogHard;
+
 	sf::Texture backText;
 
 	std::vector<GameObject*> mItems;
@@ -39,6 +45,9 @@ private:
 	void checkDel(const sf::RectangleShape* deleteBox);
 	void drawGame();
 	void moveObj(const float& dt);
+
+	// returns speed/spawn values based on current difficulty
+	void getDifficultyParams(float& minY, float& maxY, float& minSpawn, float& maxSpawn );
 
 public:
 	Game();
