@@ -7,9 +7,6 @@ Project Title: Code Ninja
 Creators: 
 Jacob Langer (lab section 8), Vincent Rampp (lab section 12), Kristina Mullukatte (lab section 7), Raahina Sheik Syed Ali (lab section 7) 
 
----
-Video Demo Link:
-
 
 ---
 
@@ -27,10 +24,12 @@ The player uses mouse movements to “slice” through the code:
 As the game progresses, the difficulty increases with faster-moving objects and more complex code snippets, challenging the player’s reaction time and programming knowledge.
 
 ---
+
 Technologies Used:
-C++
-SFML (Simple and Fast Multimedia Library)
-Object-Oriented Programming (OOP)
+* C++
+* SFML (Simple and Fast Multimedia Library)
+* Object-Oriented Programming (OOP)
+
 ---
 
 HOW TO RUN THE PROGRAM:
@@ -109,6 +108,8 @@ GameObject (base class)
 
 GENERATIVE AI USAGE:
 * Debugging assistance
-* Code structure suggestions
+* Code suggestions for BONUS
 * README and documentation formatting
-
+---
+Video Link: 
+https://youtu.be/NpoIJl8PgNw
