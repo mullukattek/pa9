@@ -111,3 +111,6 @@ GENERATIVE AI USAGE:
 * Debugging assistance
 * Code structure suggestions
 * README and documentation formatting
+
+Video Link: 
+https://youtu.be/NpoIJl8PgNw
