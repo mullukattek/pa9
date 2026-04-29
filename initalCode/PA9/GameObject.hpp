@@ -6,16 +6,17 @@
 // Base Class
 #pragma once                 
 #include <iostream>         
-
+#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Texture.hpp>
 // Base class for all objects in the game
-class GameObject {
+class GameObject : public sf::Sprite // public sf::Sprite{
+{
 protected:
-    float x, y;            // position of object on screen
-    float speed;           // movement speed
-
+    sf::Vector2f velocity; // movement speed in x and y directions 
+    int timeSpawn; // used to determine when each game object should spawn
 public:
     // Constructor
-    GameObject(float startX = 0, float startY = 0, float spd = 1.0f);
+    GameObject(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img);
 
     // Virtual destructor 
     virtual ~GameObject();
@@ -23,13 +24,13 @@ public:
     // Virtual update function 
     virtual void update();
 
-    // Virtual render function (display object)
-    virtual void render();
+    sf::Vector2f getSpeed() const;
 
-    // Set position
-    void setPosition(float newX, float newY);
+    void setSpeed(const float& xSpd, const float& ySpd);
 
-    // Set speed
-    void setSpeed(float spd);
+    int getSpawnTime() const;
+
+    virtual int onSlice() = 0;
+
 };
 

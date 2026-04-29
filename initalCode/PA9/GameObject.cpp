@@ -7,32 +7,39 @@
 #include "GameObject.hpp"
 
 // initializes position and speed
-GameObject::GameObject(float startX, float startY, float spd) {
-    x = startX;
-    y = startY;
-    speed = spd;
+
+
+GameObject::GameObject(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img) : sf::Sprite(img)
+{
+    setPosition(sf::Vector2f(startX, startY));
+    velocity.x = xSpd;
+    velocity.y = ySpd;
+    timeSpawn = spawn;
 }
 
 // Destructor
 GameObject::~GameObject() {}
 
 // Update function moves object 
-void GameObject::update() {
-    y += speed; 
+void GameObject::update() 
+{
+    move(velocity);
 }
 
-// Render function 
-void GameObject::render() {
-    std::cout << "GameObject at (" << x << ", " << y << ")" << std::endl;
+
+sf::Vector2f GameObject::getSpeed() const
+{
+    return velocity;
 }
 
-// Set new position
-void GameObject::setPosition(float newX, float newY) {
-    x = newX;
-    y = newY;
+void GameObject::setSpeed(const float& xSpd, const float& ySpd)
+{
+    velocity.x = xSpd;
+    velocity.y = ySpd;
 }
 
-// Set speed
-void GameObject::setSpeed(float spd) {
-    speed = spd;
+int GameObject::getSpawnTime() const
+{
+    return timeSpawn;
 }
+

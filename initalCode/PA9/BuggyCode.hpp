@@ -23,16 +23,12 @@ private:
 
 public:
     
-    BuggyCode(ErrorType t);
+    BuggyCode(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img, const ErrorType& t);
 
     virtual ~BuggyCode();
 
-    
     // Polymorphic function
     // Returns score penalty based on type
     int onSlice() override;
 
-
-    // Override render to display type
-    void render() override;
 };

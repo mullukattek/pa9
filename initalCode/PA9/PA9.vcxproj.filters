@@ -18,5 +18,153 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BuggyCode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CorrectCode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BuggyCode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CodeItem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CorrectCode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="test1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="test2.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="title.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="back.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="exit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="howTo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="play.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="howToScreen.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="good1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="good2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="good3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="goodM1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="goodM2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="goodM3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="goodH1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="goodH2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="goodH3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="syntax1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="syntax2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="syntax3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="syntaxM1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="syntaxM2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="syntaxM3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="syntaxH1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="syntaxH2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="syntaxH3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logic1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logic2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logic3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logicM1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logicM2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logicM3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logicH1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logicH2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="logicH3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="background.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

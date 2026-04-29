@@ -13,12 +13,10 @@ protected:
     bool sliced;        
 
 public:
-    CodeItem();
+    CodeItem(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img);
     virtual ~CodeItem();
 
     // Virtual function for slicing 
-    virtual int onSlice(); // should returns points
+    virtual int onSlice() override; // should returns points
 
-    // Override render
-    virtual void render() override;
 };

@@ -7,7 +7,8 @@
 #include "CodeItem.hpp"
 
 // Constructor
-CodeItem::CodeItem() : GameObject() {
+CodeItem::CodeItem(const float& startX, const float& startY, const float& xSpd, const float& ySpd, const int& spawn, const sf::Texture& img) 
+    : GameObject(startX, startY, xSpd, ySpd, spawn, img) {
     // Initializes the 'sliced' state to false (object starts unsliced)
     sliced = false;
 }
@@ -21,10 +22,3 @@ int CodeItem::onSlice() {
     sliced = true; // Mark the object as sliced
     return 0;      // have to rewrite next class---> no score awarded for now
 }
-
-// Render function to display the object
-void CodeItem::render() {
-    // Outputs the object's current position (x, y) to the console
-    std::cout << "CodeItem at (" << x << ", " << y << ")" << std::endl;
-}
-
